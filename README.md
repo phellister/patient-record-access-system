@@ -1,117 +1,86 @@
 # Patient Record Access System
 
-This smart contract facilitates the management of a blood donation drive, allowing hospitals, patients, and donors to participate. It provides functions for adding entities, querying information, and handling pledges. The code incorporates validation and clear error messages to ensure the integrity of the data and the security of the smart contract.
+## Overview
 
-## Structure
+This ICP smart contract allows Patient to manage access to their medical History to doctors and hospitals. It manages doctors and their assignments to hospitals, and patient-doctor interactions. It has functions to update patient history and assign patients to doctors. The error handling is expanded to cover unauthorized access and payload validation issues. The Candid interface is updated to reflect the changes in functionality.
 
-### 1. Struct Definitions
+## 1. Struct Definitions
 
-#### Patient
-
-- **Attributes:**
-  - `id`, `name`, `blood_group`, `hospital`, `description`, `needed_pints`, `donations`, `password`, `is_complete`, `donors_ids`.
-- Represents information about a patient in need of blood donation.
-
-#### Hospital
+### Doctor
 
 - **Attributes:**
-  - `id`, `name`, `address`, `password`, `city`, `donations`, `donors_ids`.
-- Represents a hospital participating in the blood donation drive.
+  - `id`, `name`, `password`, `hospital_id`, `patient_ids`.
+- Represents information about a doctor involved in the blood donation drive.
 
-#### Donor
+### PatientHistoryUpdate
 
 - **Attributes:**
-  - `id`, `name`, `password`, `blood_group`, `beneficiaries`.
-- Represents an individual willing to donate blood.
+  - `doctor_id`, `patient_id`, `doctor_password`, `new_history`.
+- Represents a payload structure for updating a patient's medical history.
 
-### 2. Storable and BoundedStorable Implementations
+### EditDoctor
 
-- `Storable` and `BoundedStorable` traits are implemented for serialization and deserialization of patient, hospital, and donor data.
+- **Attributes:**
+  - `name`, `doctor_id`, `hospital_id`, `doctor_password`, `hospital_password`.
+- Represents a payload structure for editing doctor attributes.
 
-### 3. Memory Management and Storage
+### DoctorPayload
 
-- Utilizes a thread-local static variable for managing memory and ID generation.
-- Uses `StableBTreeMap` for stable storage of patient, hospital, and donor data.
+- **Attributes:**
+  - `name`, `hospital_id`, `password`, `hospital_password`.
+- Represents a payload structure for adding a new doctor.
 
-### 4. Payload Structs
+## 2. Additional Storage
 
-#### HospitalPayload
+- Introduces a new `DOCTOR_STORAGE` using `StableBTreeMap` to store doctor-related information.
 
-- Payload structure for adding a new hospital.
+## 3. Update Functions
 
-#### PatientPayload
+### assign_patient_to_doctor
 
-- Payload structure for adding a new patient.
+- Assigns a patient to a doctor and adds the patient to the doctor's hospital.
 
-#### EditPatientPayload
+### update_patient_history
 
-- Payload structure for editing patient attributes.
+- Updates a patient's medical history by a doctor.
 
-#### DonorPayload
+### add_doctor
 
-- Payload structure for adding a new donor.
+- Adds a new doctor to the system.
 
-#### EditHospitalPayload
+### add_doctor_to_hospital
 
-- Payload structure for editing hospital attributes.
+- Helper function to add a doctor to a hospital.
 
-#### PledgePayload
+### edit_doctor
 
-- Payload structure for a donor pledging to a hospital or patient.
+- Edits doctor attributes and assigns the doctor to a hospital.
 
-### 5. Query Functions
+## 4. Query Functions
 
-#### get_all_hospitals
+### get_doctor_by_id
 
-- Retrieves a list of all hospitals.
+- Retrieves a doctor by ID.
 
-#### get_hospital_by_city_and_name
+### get_patient_info
 
-- Retrieves hospitals based on city or name.
+- Retrieves patient information by patient ID and doctor password.
 
-#### get_hospital_by_id
+## 5. Helper Functions
 
-- Retrieves a hospital by ID.
+### add_doctor_to_storage
 
-#### get_patient
+- Helper function to add a doctor to storage.
 
-- Retrieves a patient by ID.
+### add_patient_to_hospital
 
-#### get_incomplete_donation_patients
+- Helper function to add a patient to a hospital.
 
-- Retrieves a list of patients still in need of blood donations.
+## 6. Error Handling
 
-### 6. Update Functions
+- Extends the `Error` enum with new variants (`AlreadyInit`, `Unauthorized`).
 
-#### add_hospital
-
-- Adds a new hospital to the system.
-
-#### edit_hospital
-
-- Edits hospital attributes.
-
-#### pledge_to_hospital
-
-- Handles a donor pledging to donate blood to a hospital.
-
-#### add_patient
-
-- Adds a new patient to the system.
-
-#### edit_patient
-
-- Edits patient attributes.
-
-#### pledge_to_patient
-
-- Handles a donor pledging to donate blood to a specific patient.
-
-### 7. Error Handling
-
-- Defines an `Error` enum for handling various error scenarios (not found, already initialized, invalid payload, unauthorized access).
-
-### 8. Candid Interface
+## 7. Candid Interface
 
 - Exports the Candid interface for seamless interaction with the Internet Computer.
 
