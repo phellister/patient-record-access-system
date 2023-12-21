@@ -1,0 +1,28 @@
+{
+  "canisters": {
+    "patient_records_backend": {
+      "candid": "src/patient_records_backend/patient_records_backend.did",
+      "package": "patient_records_backend",
+      "type": "rust"
+    },
+    "patient_records_frontend": {
+      "dependencies": ["patient_records_backend"],
+      "frontend": {
+        "entrypoint": "src/patient_records_frontend/src/index.html"
+      },
+      "source": [
+        "src/patient_records_frontend/assets",
+        "dist/patient_records_frontend/"
+      ],
+      "type": "assets"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}

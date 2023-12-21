@@ -1,0 +1,5 @@
+[workspace]
+members = [
+    "src/patient_records_backend",
+]
+resolver = "2"

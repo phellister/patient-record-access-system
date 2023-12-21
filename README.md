@@ -1,0 +1,175 @@
+# Patient Record Access System
+
+This smart contract facilitates the management of a blood donation drive, allowing hospitals, patients, and donors to participate. It provides functions for adding entities, querying information, and handling pledges. The code incorporates validation and clear error messages to ensure the integrity of the data and the security of the smart contract.
+
+## Structure
+
+### 1. Struct Definitions
+
+#### Patient
+
+- **Attributes:**
+  - `id`, `name`, `blood_group`, `hospital`, `description`, `needed_pints`, `donations`, `password`, `is_complete`, `donors_ids`.
+- Represents information about a patient in need of blood donation.
+
+#### Hospital
+
+- **Attributes:**
+  - `id`, `name`, `address`, `password`, `city`, `donations`, `donors_ids`.
+- Represents a hospital participating in the blood donation drive.
+
+#### Donor
+
+- **Attributes:**
+  - `id`, `name`, `password`, `blood_group`, `beneficiaries`.
+- Represents an individual willing to donate blood.
+
+### 2. Storable and BoundedStorable Implementations
+
+- `Storable` and `BoundedStorable` traits are implemented for serialization and deserialization of patient, hospital, and donor data.
+
+### 3. Memory Management and Storage
+
+- Utilizes a thread-local static variable for managing memory and ID generation.
+- Uses `StableBTreeMap` for stable storage of patient, hospital, and donor data.
+
+### 4. Payload Structs
+
+#### HospitalPayload
+
+- Payload structure for adding a new hospital.
+
+#### PatientPayload
+
+- Payload structure for adding a new patient.
+
+#### EditPatientPayload
+
+- Payload structure for editing patient attributes.
+
+#### DonorPayload
+
+- Payload structure for adding a new donor.
+
+#### EditHospitalPayload
+
+- Payload structure for editing hospital attributes.
+
+#### PledgePayload
+
+- Payload structure for a donor pledging to a hospital or patient.
+
+### 5. Query Functions
+
+#### get_all_hospitals
+
+- Retrieves a list of all hospitals.
+
+#### get_hospital_by_city_and_name
+
+- Retrieves hospitals based on city or name.
+
+#### get_hospital_by_id
+
+- Retrieves a hospital by ID.
+
+#### get_patient
+
+- Retrieves a patient by ID.
+
+#### get_incomplete_donation_patients
+
+- Retrieves a list of patients still in need of blood donations.
+
+### 6. Update Functions
+
+#### add_hospital
+
+- Adds a new hospital to the system.
+
+#### edit_hospital
+
+- Edits hospital attributes.
+
+#### pledge_to_hospital
+
+- Handles a donor pledging to donate blood to a hospital.
+
+#### add_patient
+
+- Adds a new patient to the system.
+
+#### edit_patient
+
+- Edits patient attributes.
+
+#### pledge_to_patient
+
+- Handles a donor pledging to donate blood to a specific patient.
+
+### 7. Error Handling
+
+- Defines an `Error` enum for handling various error scenarios (not found, already initialized, invalid payload, unauthorized access).
+
+### 8. Candid Interface
+
+- Exports the Candid interface for seamless interaction with the Internet Computer.
+
+## ICP
+
+To learn more before you start working with patient_records, see the following documentation available online:
+
+- [Quick Start](https://internetcomputer.org/docs/quickstart/quickstart-intro)
+- [SDK Developer Tools](https://internetcomputer.org/docs/developers-guide/sdk-guide)
+- [Rust Canister Devlopment Guide](https://internetcomputer.org/docs/rust-guide/rust-intro)
+- [ic-cdk](https://docs.rs/ic-cdk)
+- [ic-cdk-macros](https://docs.rs/ic-cdk-macros)
+- [Candid Introduction](https://internetcomputer.org/docs/candid-guide/candid-intro)
+- [JavaScript API Reference](https://erxue-5aaaa-aaaab-qaagq-cai.raw.icp0.io)
+
+If you want to start working on your project right away, you might want to try the following commands:
+
+```bash
+cd patient_records/
+dfx help
+dfx canister --help
+```
+
+## Running the project locally
+
+If you want to test your project locally, you can use the following commands:
+
+```bash
+# Starts the replica, running in the background
+dfx start --background
+
+# Deploys your canisters to the replica and generates your candid interface
+dfx deploy
+```
+
+Once the job completes, your application will be available at `http://localhost:4943?canisterId={asset_canister_id}`.
+
+If you have made changes to your backend canister, you can generate a new candid interface with
+
+```bash
+npm run generate
+```
+
+at any time. This is recommended before starting the frontend development server, and will be run automatically any time you run `dfx deploy`.
+
+If you are making frontend changes, you can start a development server with
+
+```bash
+npm start
+```
+
+Which will start a server at `http://localhost:8080`, proxying API requests to the replica at port 4943.
+
+### Note on frontend environment variables
+
+If you are hosting frontend code somewhere without using DFX, you may need to make one of the following adjustments to ensure your project does not fetch the root key in production:
+
+- set`DFX_NETWORK` to `production` if you are using Webpack
+- use your own preferred method to replace `process.env.DFX_NETWORK` in the autogenerated declarations
+  - Setting `canisters -> {asset_canister_id} -> declarations -> env_override to a string` in `dfx.json` will replace `process.env.DFX_NETWORK` with the string in the autogenerated declarations
+- Write your own `createActor` constructor
